@@ -9,6 +9,10 @@
 <body>
     <h1>Exemple de connexion à MySQL via JSP</h1>
     <% 
+    <form method="get">
+        <input name="annee" type="text" value="<% out.println(annee); %>">
+        <input type="submit">
+    </form>
     String url = "jdbc:mariadb://localhost:3306/films";
     String user = "mysql";
     String password = "mysql";
