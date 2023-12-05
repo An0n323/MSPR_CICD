@@ -9,6 +9,7 @@
 </head>
 <body>
     <h1>Exemple de connexion à MySQL via JSP</h1>
+    <input type="année" id="année" name="année">
     <% 
     String url = "jdbc:mysql://localhost:3306/films";
     String user = "root";
