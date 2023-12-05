@@ -1,38 +1,45 @@
-// Charger le pilote JDBC
-Class.forName("org.mariadb.jdbc.Driver");
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
 
-// Établir la connexion
+<html> <head> <meta charset="UTF-8"> <title>Modification titre film</title> </head> <body>
+<%-- Formulaire de modification --%>
+
+<form method="post"> ID film: <input type="text" name="id"> Nouveau titre: <input type="text" name="titre"> <input type="submit" value="Modifier"> </form>
+<%
+// Récupération des paramètres
+String id = request.getParameter("id");
+String nouveauTitre = request.getParameter("titre");
+String url = "jdbc:mysql://localhost/films"; 
+String user = "root";
+String password = "root";
+
+// Connexion à la BD
+Class.forName("com.mysql.jdbc.Driver");
 Connection conn = DriverManager.getConnection(url, user, password);
 
-// Exemple de requête SQL
-String sql = "SELECT idFilm, titre, année FROM Film WHERE année >= 2000";
-PreparedStatement pstmt = conn.prepareStatement(sql);
-ResultSet rs = pstmt.executeQuery();
+if(id != null && nouveauTitre != null) {
 
-// Afficher les résultats (à adapter selon vos besoins)
-while (rs.next()) {
-    String idFilm = rs.getString("idFilm");
-    String titre = rs.getString("titre");
-    String année = rs.getString("année");
+  // Requête de mise à jour        
+  String sql = "UPDATE Film SET titre=? WHERE idFilm=?";
 
-    // Faites ce que vous voulez avec les données...
-    // Exemple d'affichage de 2 colonnes
-    out.println("id : " + idFilm + ", titre : " + titre + ", année : " + année + "</br>");
+  PreparedStatement pstmt = conn.prepareStatement(sql);
 
-    // Vérifier si l'ID du film correspond à celui choisi par l'utilisateur
-    if (idFilm.equals(request.getParameter("idFilm"))) {
-        // Afficher un formulaire pour modifier le titre du film
-        out.println("<form action=\"modifierTitre.jsp\" method=\"post\">");
-        out.println("<input type=\"hidden\" name=\"idFilm\" value=\"" + idFilm + "\">");
-        out.println("<label for=\"nouveauTitre\">Nouveau titre : </label>");
-        out.println("<input type=\"text\" name=\"nouveauTitre\">");
-        out.println("<input type=\"submit\" value=\"Modifier\">");
-        out.println("</form>");
-    }
+  pstmt.setString(1, nouveauTitre);
+  pstmt.setInt(2, Integer.parseInt(id));
+
+  int nbRows = pstmt.executeUpdate();
+
+  // Message de confirmation
+  if(nbRows > 0) {
+    out.println("Titre modifié!");  
+  } else {
+    out.println("Echec modification");
+  }
+
 }
 
-// Fermer les ressources 
-rs.close();
-pstmt.close();
+// Fermeture ressources
 conn.close();
 %>
+
+</body> </html>
